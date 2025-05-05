@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment;
 import com.example.mindvault.R;
 import com.example.mindvault.ui.home.HomeFragment;
 import com.example.mindvault.ui.notes.NotesFragment;
+import com.example.mindvault.ui.pomodoro.PomodoroFragment;
 import com.example.mindvault.ui.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,9 +40,11 @@ public class MainActivity extends AppCompatActivity {
         navFlashcards = findViewById(R.id.navFlashcards);
         navProfile = findViewById(R.id.navProfile);
 
+
         navHome.setOnClickListener(v -> loadFragment(new HomeFragment()));
         navNotes.setOnClickListener(v -> loadFragment(new NotesFragment()));
         navProfile.setOnClickListener(v -> loadFragment(new ProfileFragment()));
+        navPlanner.setOnClickListener(v -> loadFragment(new PomodoroFragment()));
 
         loadFragment(new HomeFragment());
     }
