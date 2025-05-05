@@ -1,5 +1,6 @@
 package com.example.mindvault.ui.pomodoro;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.LayoutInflater;
@@ -9,6 +10,10 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.fragment.app.Fragment;
 import com.example.mindvault.R;
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.Toast;
+import androidx.annotation.Nullable;
 
 public class PomodoroFragment extends Fragment {
     private TextView timerText;
@@ -29,6 +34,50 @@ public class PomodoroFragment extends Fragment {
     private int pomodorosUntilLongBreak = 4;
 
     private long timeLeftInMillis = 25 * 60 * 1000;
+
+    private SharedPreferences sharedPreferences;
+    private static final String PREFS_NAME = "PomodoroPrefs";
+    private static final String KEY_FOCUS_LENGTH = "focusLength";
+    private static final String KEY_POMODOROS_UNTIL_LONG_BREAK = "pomodorosUntilLongBreak";
+    private static final String KEY_SHORT_BREAK_LENGTH = "shortBreakLength";
+    private static final String KEY_LONG_BREAK_LENGTH = "longBreakLength";
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        sharedPreferences = requireActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        loadSettings();
+    }
+
+    private void loadSettings() {
+        focusTime = sharedPreferences.getInt(KEY_FOCUS_LENGTH, 25) * 60 * 1000L;
+        shortBreakTime = sharedPreferences.getInt(KEY_SHORT_BREAK_LENGTH, 5) * 60 * 1000L;
+        longBreakTime = sharedPreferences.getInt(KEY_LONG_BREAK_LENGTH, 15) * 60 * 1000L;
+        pomodorosUntilLongBreak = sharedPreferences.getInt(KEY_POMODOROS_UNTIL_LONG_BREAK, 4);
+
+        // Update current timer if not running
+        if (!isRunning) {
+            switch (currentMode) {
+                case FOCUS:
+                    timeLeftInMillis = focusTime;
+                    break;
+                case SHORT_BREAK:
+                    timeLeftInMillis = shortBreakTime;
+                    break;
+                case LONG_BREAK:
+                    timeLeftInMillis = longBreakTime;
+                    break;
+            }
+            updateTimerText();
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Reload settings when returning from SettingsFragment
+        loadSettings();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -152,7 +201,7 @@ public class PomodoroFragment extends Fragment {
     private void updateTimerText() {
         int minutes = (int) (timeLeftInMillis / 1000) / 60;
         int seconds = (int) (timeLeftInMillis / 1000) % 60;
-        String timeLeftFormatted = String.format("%02d:%02d", minutes, seconds);
+        @SuppressLint("DefaultLocale") String timeLeftFormatted = String.format("%02d:%02d", minutes, seconds);
         timerText.setText(timeLeftFormatted);
     }
 
