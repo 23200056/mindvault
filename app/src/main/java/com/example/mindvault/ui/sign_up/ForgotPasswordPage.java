@@ -1,4 +1,4 @@
-package com.example.mindvault.ui;
+package com.example.mindvault.ui.sign_up;
 
 import android.os.Bundle;
 

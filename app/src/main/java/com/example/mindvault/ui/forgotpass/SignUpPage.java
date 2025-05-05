@@ -1,4 +1,4 @@
-package com.example.mindvault.ui.sign_up;
+package com.example.mindvault.ui.forgotpass;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
