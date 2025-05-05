@@ -104,8 +104,7 @@ public class PomodoroFragment extends Fragment {
 
         skipButton.setOnClickListener(v -> {
             if (isRunning) {
-                timer.cancel();
-                completeCurrentMode();
+                skipCurrentSession();
             }
         });
 
@@ -121,6 +120,15 @@ public class PomodoroFragment extends Fragment {
                 .replace(R.id.fragmentContainer, new PomodoroSettingsFragment())
                 .addToBackStack(null)
                 .commit();
+    }
+
+    private void skipCurrentSession() {
+        if (timer != null) {
+            timer.cancel(); // Cancel the current timer
+        }
+        timeLeftInMillis = 0; // Force timer to finish
+        updateTimerText(); // Show 00:00 immediately
+        completeCurrentMode(); // Trigger mode transition
     }
 
     private void setMode(PomodoroMode mode) {
@@ -184,6 +192,8 @@ public class PomodoroFragment extends Fragment {
 
             @Override
             public void onFinish() {
+                timeLeftInMillis = 0; // Ensure it's set to 0
+                updateTimerText(); // Show 00:00
                 completeCurrentMode();
             }
         }.start();
