@@ -3,36 +3,63 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#222222">
+    android:background="#222222"
+    android:clickable="true"
+    android:focusableInTouchMode="true">
 
-    <!-- Header -->
-    <LinearLayout
+    <!-- Header row (now its own ConstraintLayout) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="33dp"
-        android:layout_marginEnd="24dp"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Title -->
         <TextView
             android:id="@+id/textHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:text="Notes"
             android:textColor="@color/white"
             android:textSize="33sp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Search Button -->
+        <!-- Search   (hidden until 🔍 is tapped) -->
+        <EditText
+            android:id="@+id/editSearch"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="12dp"
+            android:background="@drawable/bg_round"
+            android:hint="Search…"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:paddingStart="12dp"
+            android:textColor="#FFFFFF"
+            android:textColorHint="#80FFFFFF"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/buttonSearch"
+            app:layout_constraintStart_toEndOf="@id/textHeader"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 🔍 button (always sticks to the far right) -->
         <FrameLayout
             android:id="@+id/buttonSearch"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:background="@drawable/bg_round">
+            android:background="@drawable/bg_round"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
                 android:layout_width="24dp"
@@ -41,7 +68,7 @@
                 android:src="@drawable/ic_search"
                 app:tint="#FFFFFF" />
         </FrameLayout>
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--    initial background image if there's no notes-->
     <LinearLayout
@@ -73,7 +100,7 @@
         android:id="@+id/recyclerNotes"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

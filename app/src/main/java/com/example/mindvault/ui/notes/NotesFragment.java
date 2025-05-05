@@ -1,13 +1,18 @@
 package com.example.mindvault.ui.notes;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,7 +22,6 @@ import com.example.mindvault.R;
 import com.example.mindvault.data.AppDatabase;
 import com.example.mindvault.data.Note;
 import com.example.mindvault.data.NoteDao;
-import com.example.mindvault.ui.main.MainActivity;
 
 public class NotesFragment extends Fragment {
 
@@ -25,6 +29,8 @@ public class NotesFragment extends Fragment {
     private NoteAdapter adapter;
     private RecyclerView recycler;
     private View emptyState;
+    private View searchBtn;
+    private EditText editBox;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -42,6 +48,8 @@ public class NotesFragment extends Fragment {
         noteDao = db.noteDao();
         recycler = root.findViewById(R.id.recyclerNotes);
         emptyState = root.findViewById(R.id.emptyState);
+        searchBtn = root.findViewById(R.id.buttonSearch);
+        editBox = root.findViewById(R.id.editSearch);
 
         recycler.setLayoutManager(new GridLayoutManager(requireContext(), 1));
 
@@ -56,6 +64,44 @@ public class NotesFragment extends Fragment {
                 .setOnClickListener(v -> openFragment(CreateNoteFragment.newInstance(null)));
 
         updateVisibility();
+
+        searchBtn.setOnClickListener(v -> toggleSearch());
+
+        editBox.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void onTextChanged(CharSequence s, int st, int b, int c) {
+                String q = s.toString().trim();
+                if (q.isEmpty()) {
+                    adapter.setNotes(noteDao.getAllNotes());
+                } else {
+                    adapter.setNotes(noteDao.searchNotes(q));
+                }
+                updateVisibility();
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int st, int c, int a) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable e) {
+            }
+        });
+
+        editBox.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE
+                    || actionId == EditorInfo.IME_ACTION_SEARCH) {
+                collapseSearch();
+                return true;
+            }
+            return false;
+        });
+
+        editBox.setOnFocusChangeListener((v, hasFocus) -> {
+            if (!hasFocus && editBox.getVisibility() == View.VISIBLE) {
+                collapseSearch();
+            }
+        });
     }
 
     @Override
@@ -66,9 +112,18 @@ public class NotesFragment extends Fragment {
     }
 
     private void updateVisibility() {
-        boolean hasNotes = adapter.getItemCount() > 0;
-        recycler.setVisibility(hasNotes ? View.VISIBLE : View.GONE);
-        emptyState.setVisibility(hasNotes ? View.GONE : View.VISIBLE);
+        String query = editBox.getText().toString().trim();
+        boolean searching = !query.isEmpty();
+        int count = adapter.getItemCount();
+
+        if (searching) {
+            emptyState.setVisibility(View.GONE);
+            recycler.setVisibility(View.VISIBLE);
+        } else {
+            boolean hasNotes = count > 0;
+            emptyState.setVisibility(hasNotes ? View.GONE : View.VISIBLE);
+            recycler.setVisibility(hasNotes ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void openFragment(Fragment f) {
@@ -91,5 +146,33 @@ public class NotesFragment extends Fragment {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void toggleSearch() {
+        if (editBox.getVisibility() == View.GONE) {
+            searchBtn.setVisibility(View.GONE);
+            editBox.setVisibility(View.VISIBLE);
+            editBox.requestFocus();
+            InputMethodManager imm =
+                    (InputMethodManager) requireContext()
+                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(editBox, InputMethodManager.SHOW_IMPLICIT);
+        } else {
+            collapseSearch();
+        }
+    }
+
+
+    private void hideKeyboard(View v) {
+        InputMethodManager imm = (InputMethodManager)
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    private void collapseSearch() {
+        editBox.setVisibility(View.GONE);
+        searchBtn.setVisibility(View.VISIBLE);
+        hideKeyboard(editBox);
+        updateVisibility();
     }
 }

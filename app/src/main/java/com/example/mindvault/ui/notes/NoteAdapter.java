@@ -13,10 +13,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.mindvault.R;
 import com.example.mindvault.data.Note;
 
+import java.util.Collections;
 import java.util.List;
 
 public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder> {
-    private List<Note> notes;
+    private List<Note> notes   = Collections.emptyList();
     private final OnNoteClick listener;
     private final OnNoteDelete deleteNote;
 
@@ -35,8 +36,8 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.NoteViewHolder
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    public void setNotes(List<Note> notes) {
-        this.notes = notes;
+    public void setNotes(List<Note> newList) {
+        notes = newList;
         notifyDataSetChanged();
     }
 

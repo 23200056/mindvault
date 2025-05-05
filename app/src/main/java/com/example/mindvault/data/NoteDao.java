@@ -24,4 +24,9 @@ public interface NoteDao {
 
     @Query("SELECT * FROM Note WHERE id = :id")
     Note getNoteById(int id);
+
+    @Query("SELECT * FROM Note " +
+            "WHERE title   LIKE '%' || :q || '%' " +
+            "   OR content LIKE '%' || :q || '%'")
+    List<Note> searchNotes(String q);
 }
