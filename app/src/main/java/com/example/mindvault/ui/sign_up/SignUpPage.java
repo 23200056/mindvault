@@ -99,7 +99,7 @@ public class SignUpPage extends AppCompatActivity {
             }
         });
 
-        AppDatabase db = AppDatabase.getInstance(this);
+        AppDatabase db = AppDatabase.getInstance(this.getApplication());
         User newUser = new User();
         newUser.email = emailInput.getText().toString();
         newUser.password = passwordInput.getText().toString();

@@ -112,7 +112,7 @@ public class LoginPage extends AppCompatActivity {
                 Toast.makeText(this, "Facebook Login tapped", Toast.LENGTH_SHORT).show()
         );
 
-        AppDatabase db = AppDatabase.getInstance(this);
+        AppDatabase db = AppDatabase.getInstance(this.getApplication());
         Executors.newSingleThreadExecutor().execute(() -> {
             String email = "";
             String pwd = "";

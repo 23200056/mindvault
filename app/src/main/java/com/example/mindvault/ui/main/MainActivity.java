@@ -42,7 +42,6 @@ public class MainActivity extends AppCompatActivity {
         navFlashcards = findViewById(R.id.navFlashcards);
         navProfile = findViewById(R.id.navProfile);
 
-
         navHome.setOnClickListener(v -> loadFragment(new HomeFragment()));
         navNotes.setOnClickListener(v -> loadFragment(new NotesFragment()));
         navProfile.setOnClickListener(v -> loadFragment(new ProfileFragment()));
@@ -50,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
         loadFragment(new HomeFragment());
 
-        navPlanner.setOnClickListener(v -> {
+        navFlashcards.setOnClickListener(v -> {
             Intent intent = new Intent(this, FlashcardPage.class);
             startActivity(intent);
         });
