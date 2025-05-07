@@ -1,8 +1,10 @@
 package com.example.mindvault.ui.login;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -13,8 +15,13 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindvault.R;
-import com.example.mindvault.ui.sign_up.ForgotPasswordPage;
-import com.example.mindvault.ui.forgotpass.SignUpPage;
+import com.example.mindvault.data.AppDatabase;
+import com.example.mindvault.data.User;
+import com.example.mindvault.ui.forgotpass.ForgotPasswordPage;
+import com.example.mindvault.ui.main.MainActivity;
+import com.example.mindvault.ui.sign_up.SignUpPage;
+
+import java.util.concurrent.Executors;
 
 public class LoginPage extends AppCompatActivity {
 
@@ -91,7 +98,7 @@ public class LoginPage extends AppCompatActivity {
             // TODO: replace with real auth
             if (fakeAuth(email, pwd)) {
                 Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-                // navigate into your main activity…
+                startActivity(new Intent(LoginPage.this, MainActivity.class));
             } else {
                 Toast.makeText(this, "Incorrect username or password", Toast.LENGTH_SHORT).show();
             }
@@ -104,6 +111,21 @@ public class LoginPage extends AppCompatActivity {
         facebookButton.setOnClickListener(v ->
                 Toast.makeText(this, "Facebook Login tapped", Toast.LENGTH_SHORT).show()
         );
+
+        AppDatabase db = AppDatabase.getInstance(this);
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String email = "";
+            String pwd = "";
+            User user = db.userDao().getUser(email, pwd);
+            runOnUiThread(() -> {
+                if (user != null) {
+                    // success → navigate
+                } else {
+                    Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
     }
 
     /** Stub method for demonstration */

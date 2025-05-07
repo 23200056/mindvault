@@ -1,4 +1,4 @@
-package com.example.mindvault.ui.forgotpass;
+package com.example.mindvault.ui.sign_up;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -13,11 +13,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.mindvault.R;
+import com.example.mindvault.data.AppDatabase;
+import com.example.mindvault.data.User;
 import com.example.mindvault.ui.login.LoginPage;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 public class SignUpPage extends AppCompatActivity {
 
@@ -32,8 +35,8 @@ public class SignUpPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_page);
 
+
         // Bind views
-        backButton      = findViewById(R.id.backButton);
         usernameInput   = findViewById(R.id.usernameInput);
         emailInput      = findViewById(R.id.emailInput);
         dobInput        = findViewById(R.id.dobInput);
@@ -42,8 +45,6 @@ public class SignUpPage extends AppCompatActivity {
         loginText       = findViewById(R.id.loginText);
         registerButton  = findViewById(R.id.registerButton);
 
-        // Back arrow → close this Activity
-        backButton.setOnClickListener(v -> finish());
 
         // “Already have an account? Login” → go to LoginPage
         loginText.setOnClickListener(v -> {
@@ -97,6 +98,18 @@ public class SignUpPage extends AppCompatActivity {
                 Toast.makeText(this, "Registration failed. Try again.", Toast.LENGTH_SHORT).show();
             }
         });
+
+        AppDatabase db = AppDatabase.getInstance(this);
+        User newUser = new User();
+        newUser.email = emailInput.getText().toString();
+        newUser.password = passwordInput.getText().toString();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            db.userDao().insertUser(newUser);
+            runOnUiThread(() ->
+                    Toast.makeText(this, "Registered!", Toast.LENGTH_SHORT).show()
+            );
+        });
+
     }
 
     /** Shows a date picker and fills dobInput with MM/dd/yyyy */
