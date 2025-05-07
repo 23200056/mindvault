@@ -20,16 +20,24 @@
             android:exported="false" />
         <activity
             android:name=".ui.login.LoginPage"
-            android:exported="true" >
+            android:exported="false" />
+        <activity
+            android:name=".ui.main.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.flashcard.FlashcardPage"
+            android:exported="false" />
+        <activity
+            android:name=".ui.flashcard.FlashcardDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.flashcard.AddFlashcardActivity"
             android:exported="false" />
     </application>
 </manifest>
