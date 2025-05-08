@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -19,6 +20,7 @@ import androidx.annotation.Nullable;
 
 public class PomodoroFragment extends Fragment {
     private TextView timerText;
+    private ImageView switchmod;
     private ImageButton modeButton;
     private ImageButton playPauseButton;
     private ImageButton skipButton;
@@ -62,6 +64,7 @@ public class PomodoroFragment extends Fragment {
         playPauseButton = view.findViewById(R.id.playPauseButton);
         skipButton = view.findViewById(R.id.skipButton);
         settingsButton = view.findViewById(R.id.settingsButton);
+        switchmod = view.findViewById(R.id.switchmode);
 
         // Set initial mode
         setMode(PomodoroMode.FOCUS);
@@ -149,12 +152,15 @@ public class PomodoroFragment extends Fragment {
         switch (mode) {
             case FOCUS:
                 timeLeftInMillis = focusTime;
+                switchmod.setImageResource(R.drawable.ic_focus_mode);
                 break;
             case SHORT_BREAK:
                 timeLeftInMillis = shortBreakTime;
+                switchmod.setImageResource(R.drawable.ic_shortbreak_mode);
                 break;
             case LONG_BREAK:
                 timeLeftInMillis = longBreakTime;
+                switchmod.setImageResource(R.drawable.ic_longbreak_mode);
                 break;
         }
         updateTimerText();
