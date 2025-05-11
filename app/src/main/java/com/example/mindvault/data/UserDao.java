@@ -7,8 +7,11 @@ import androidx.room.Query;
 
 @Dao
 public interface UserDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.ABORT)
     void insertUser(User user);
+
+    @Query("SELECT * FROM users WHERE email = :email")
+    User getUserByEmail(String email);
 
     @Query("SELECT * FROM users WHERE email = :email AND password = :password")
     User getUser(String email, String password);

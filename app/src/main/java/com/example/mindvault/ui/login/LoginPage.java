@@ -1,10 +1,8 @@
 package com.example.mindvault.ui.login;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -18,7 +16,7 @@ import com.example.mindvault.R;
 import com.example.mindvault.data.AppDatabase;
 import com.example.mindvault.data.User;
 import com.example.mindvault.ui.forgotpass.ForgotPasswordPage;
-import com.example.mindvault.ui.main.MainActivity;
+import com.example.mindvault.ui.home.MainActivity;
 import com.example.mindvault.ui.sign_up.SignUpPage;
 
 import java.util.concurrent.Executors;
@@ -52,30 +50,29 @@ public class LoginPage extends AppCompatActivity {
 
         // Tab “Log In” (default)
         tabLogin.setOnClickListener(v -> {
-            // already on login screen; add any visual state change if you like
+            // already here
         });
 
         // Tab “Sign Up”
-        tabSignUp.setOnClickListener(v -> {
-            startActivity(new Intent(LoginPage.this, SignUpPage.class));
-        });
+        tabSignUp.setOnClickListener(v ->
+                startActivity(new Intent(LoginPage.this, SignUpPage.class))
+        );
 
         // Toggle password visibility
         togglePasswordVisibility.setOnClickListener(v -> {
             if (isPasswordVisible) {
                 passwordInput.setInputType(
-                        InputType.TYPE_CLASS_TEXT
-                                | InputType.TYPE_TEXT_VARIATION_PASSWORD
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_PASSWORD
                 );
                 togglePasswordVisibility.setImageResource(R.drawable.ic_eye_slash);
             } else {
                 passwordInput.setInputType(
-                        InputType.TYPE_CLASS_TEXT
-                                | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        InputType.TYPE_CLASS_TEXT |
+                                InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
                 );
                 togglePasswordVisibility.setImageResource(R.drawable.ic_eye_slash);
             }
-            // keep cursor at end
             passwordInput.setSelection(passwordInput.getText().length());
             isPasswordVisible = !isPasswordVisible;
         });
@@ -85,51 +82,42 @@ public class LoginPage extends AppCompatActivity {
                 startActivity(new Intent(LoginPage.this, ForgotPasswordPage.class))
         );
 
-        // “Log In” button
+        // “Log In” button ⇒ authenticate via Room
         loginButton.setOnClickListener(v -> {
             String email = emailInput.getText().toString().trim();
             String pwd   = passwordInput.getText().toString();
-
             if (email.isEmpty() || pwd.isEmpty()) {
                 Toast.makeText(this, "Please fill in both fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // TODO: replace with real auth
-            if (fakeAuth(email, pwd)) {
-                Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(LoginPage.this, MainActivity.class));
-            } else {
-                Toast.makeText(this, "Incorrect username or password", Toast.LENGTH_SHORT).show();
-            }
+            // Run lookup on a background thread
+            AppDatabase db = AppDatabase.getInstance(this);
+            Executors.newSingleThreadExecutor().execute(() -> {
+                User user = db.userDao().getUser(email, pwd);
+                runOnUiThread(() -> {
+                    if (user != null) {
+                        Toast.makeText(this, "Login successful!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(LoginPage.this, MainActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            });
         });
 
-        // Social buttons
+        // Social buttons (stubs)
         googleButton.setOnClickListener(v ->
                 Toast.makeText(this, "Google Sign-In tapped", Toast.LENGTH_SHORT).show()
         );
         facebookButton.setOnClickListener(v ->
                 Toast.makeText(this, "Facebook Login tapped", Toast.LENGTH_SHORT).show()
         );
-
-        AppDatabase db = AppDatabase.getInstance(this);
-        Executors.newSingleThreadExecutor().execute(() -> {
-            String email = "";
-            String pwd = "";
-            User user = db.userDao().getUser(email, pwd);
-            runOnUiThread(() -> {
-                if (user != null) {
-                    // success → navigate
-                } else {
-                    Toast.makeText(this, "Invalid credentials", Toast.LENGTH_SHORT).show();
-                }
-            });
-        });
-
-    }
-
-    /** Stub method for demonstration */
-    private boolean fakeAuth(String email, String pwd) {
-        return email.equals("user@example.com") && pwd.equals("password123");
     }
 }
+
+// name: signup1
+// email: signuptest@email.com
+// dob: 05/11/2025
+// password: pass

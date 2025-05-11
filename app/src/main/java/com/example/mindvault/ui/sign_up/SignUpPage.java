@@ -89,26 +89,20 @@ public class SignUpPage extends AppCompatActivity {
             }
 
             // TODO: replace with real registration logic
-            if (fakeRegister(username, email, dob, pwd)) {
-                Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                // e.g., go to main screen:
-                // startActivity(new Intent(this, MainActivity.class));
-                finish();
-            } else {
-                Toast.makeText(this, "Registration failed. Try again.", Toast.LENGTH_SHORT).show();
-            }
+            AppDatabase db = AppDatabase.getInstance(this);
+            User newUser = new User();
+            newUser.email    = email;
+            newUser.password = pwd;
+            // set other fields as needed…
+
+            Executors.newSingleThreadExecutor().execute(() -> {
+                db.userDao().insertUser(newUser);
+                runOnUiThread(() ->
+                        Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
+                );
+            });
         });
 
-        AppDatabase db = AppDatabase.getInstance(this);
-        User newUser = new User();
-        newUser.email = emailInput.getText().toString();
-        newUser.password = passwordInput.getText().toString();
-        Executors.newSingleThreadExecutor().execute(() -> {
-            db.userDao().insertUser(newUser);
-            runOnUiThread(() ->
-                    Toast.makeText(this, "Registered!", Toast.LENGTH_SHORT).show()
-            );
-        });
 
     }
 
@@ -137,3 +131,8 @@ public class SignUpPage extends AppCompatActivity {
         return true;
     }
 }
+
+// username: testing
+// email: testing@email.com
+// dob: 05/11/2025
+// password
