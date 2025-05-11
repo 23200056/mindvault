@@ -97,6 +97,7 @@ public class SignUpPage extends AppCompatActivity {
 
             Executors.newSingleThreadExecutor().execute(() -> {
                 db.userDao().insertUser(newUser);
+                startActivity(new Intent(SignUpPage.this, LoginPage.class));
                 runOnUiThread(() ->
                         Toast.makeText(this, "Registration successful!", Toast.LENGTH_SHORT).show()
                 );
