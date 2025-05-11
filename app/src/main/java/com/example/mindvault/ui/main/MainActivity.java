@@ -1,5 +1,6 @@
 package com.example.mindvault.ui.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.LinearLayout;
 
@@ -11,8 +12,10 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.mindvault.R;
+import com.example.mindvault.ui.flashcard.FlashcardPage;
 import com.example.mindvault.ui.home.HomeFragment;
 import com.example.mindvault.ui.notes.NotesFragment;
+import com.example.mindvault.ui.pomodoro.PomodoroFragment;
 import com.example.mindvault.ui.profile.ProfileFragment;
 
 public class MainActivity extends AppCompatActivity {
@@ -42,8 +45,14 @@ public class MainActivity extends AppCompatActivity {
         navHome.setOnClickListener(v -> loadFragment(new HomeFragment()));
         navNotes.setOnClickListener(v -> loadFragment(new NotesFragment()));
         navProfile.setOnClickListener(v -> loadFragment(new ProfileFragment()));
+        navPlanner.setOnClickListener(v -> loadFragment(new PomodoroFragment()));
 
         loadFragment(new HomeFragment());
+
+        navFlashcards.setOnClickListener(v -> {
+            Intent intent = new Intent(this, FlashcardPage.class);
+            startActivity(intent);
+        });
     }
 
     private void loadFragment(Fragment fragment) {

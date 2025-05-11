@@ -102,7 +102,7 @@ public class ForgotPasswordPage extends AppCompatActivity {
         });
 
 
-        AppDatabase db = AppDatabase.getInstance(this);
+        AppDatabase db = AppDatabase.getInstance(this.getApplication());
         Executors.newSingleThreadExecutor().execute(() -> {
             String newPass = "";
             db.userDao().updatePassword(emailInput.getText().toString(), newPass);
