@@ -16,7 +16,7 @@ import com.example.mindvault.R;
 import com.example.mindvault.data.AppDatabase;
 import com.example.mindvault.data.User;
 import com.example.mindvault.ui.forgotpass.ForgotPasswordPage;
-import com.example.mindvault.ui.home.MainActivity;
+import com.example.mindvault.ui.main.MainActivity;
 import com.example.mindvault.ui.sign_up.SignUpPage;
 
 import java.util.concurrent.Executors;
@@ -79,7 +79,7 @@ public class LoginPage extends AppCompatActivity {
 
         // “Forgot Password?”
         forgotPassword.setOnClickListener(v ->
-                startActivity(new Intent(LoginPage.this, ForgotPasswordPage.class))
+                Toast.makeText(this, "In Progress Feature", Toast.LENGTH_SHORT).show()
         );
 
         // “Log In” button ⇒ authenticate via Room
